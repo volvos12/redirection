@@ -141,3 +141,27 @@ export async function incrementClickCount(
 
   return res;
 }
+
+export async function updateShortLink(shortCode: string, newLongUrl: string) {
+  try {
+    new URL(newLongUrl); // Validate URL
+  } catch (error) {
+    console.log(error);
+    throw new Error("Invalid URL provided");
+  }
+
+  const shortLinkKey = ["shortlinks", shortCode];
+  const existingLink = await kv.get<ShortLink>(shortLinkKey);
+
+  if (!existingLink.value) {
+    throw new Error("Short link not found");
+  }
+
+  const updatedData = {
+    ...existingLink.value,
+    longUrl: newLongUrl,
+  };
+
+  await kv.set(shortLinkKey, updatedData);
+  return updatedData;
+}

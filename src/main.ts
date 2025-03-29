@@ -6,6 +6,7 @@ import {
   incrementClickCount,
   storeShortLink,
   watchShortLink,
+  updateShortLink
 } from "./db.ts";
 import { Router } from "./router.ts";
 import { render } from "npm:preact-render-to-string";
@@ -190,3 +191,24 @@ export default {
     return app.handler(req);
   },
 } satisfies Deno.ServeDefaultExport;
+
+app.post("/links/:id/update", async (req, _info, params) => {
+  const shortCode = params.pathname.groups["id"];
+
+  const formData = await req.formData();
+  const newLongUrl = formData.get("newLongUrl") as string;
+
+  if (!newLongUrl) {
+    return new Response("Missing newLongUrl", { status: 400 });
+  }
+
+  try {
+    await updateShortLink(shortCode, newLongUrl);
+    return new Response(null, {
+      status: 303,
+      headers: { "Location": `/links/${shortCode}` },
+    });
+  } catch {
+    return new Response("Error", { status: 400 });
+  }
+});

@@ -9,7 +9,7 @@ interface PageProps {
 
 const BASE_URL = Deno.env.get("DENO_ENV") === "dev"
   ? "http://localhost:8000"
-  : "https://link.fireship.app";
+  : "https://redirection-method.deno.dev";
 
 export function Layout({ children }: { children: ComponentChildren }) {
   return (
@@ -194,77 +194,102 @@ export function CreateShortlinkPage() {
 
 export function ShortlinkViewPage({ shortLink }: PageProps) {
   return (
-    <Layout>
-      <div className="space-y-8">
-        <div className="stats shadow">
-          <div className="stat">
-            <div className="stat-title">Total Clicks</div>
-            <div className="stat-value" id="clickCount">
-              {shortLink?.clickCount}
+      <Layout>
+        <div className="space-y-8">
+          <div className="stats shadow">
+            <div className="stat">
+              <div className="stat-title">Total Clicks</div>
+              <div className="stat-value" id="clickCount">
+                {shortLink?.clickCount}
+              </div>
+              <div className="stat-desc">Updated in realtime</div>
             </div>
-            <div className="stat-desc">Updated in realtime</div>
           </div>
-        </div>
 
-        <div className="card bg-base-100 shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title">Shortlink Details</h2>
-            <div className="divider"></div>
+          <div className="card bg-base-100 shadow-xl">
+            <div className="card-body">
+              <h2 className="card-title">Shortlink Details</h2>
+              <div className="divider"></div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="label">
-                  <span className="label-text font-semibold">Short URL</span>
-                </label>
-                <a
-                  href={`/${shortLink?.shortCode}`}
-                  target="_blank"
-                  className="link link-primary"
-                >
-                  {`${BASE_URL}/${shortLink?.shortCode}`}
-                </a>
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="label">
+                    <span className="label-text font-semibold">Short URL</span>
+                  </label>
+                  <a
+                      href={`/${shortLink?.shortCode}`}
+                      target="_blank"
+                      className="link link-primary"
+                  >
+                    {`${BASE_URL}/${shortLink?.shortCode}`}
+                  </a>
+                </div>
 
-              <div>
-                <label className="label">
-                  <span className="label-text font-semibold">Long URL</span>
-                </label>
-                <a
-                  href={shortLink?.longUrl}
-                  className="link link-primary"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {shortLink?.longUrl}
-                </a>
-              </div>
+                <div>
+                  <label className="label">
+                    <span className="label-text font-semibold">Long URL</span>
+                  </label>
+                  <a
+                      href={shortLink?.longUrl}
+                      className="link link-primary"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                  >
+                    {shortLink?.longUrl}
+                  </a>
+                </div>
 
-              <div>
-                <label className="label">
-                  <span className="label-text font-semibold">Created At</span>
-                </label>
-                <span>
+                <div>
+                  <label className="label">
+                    <span className="label-text font-semibold">Created At</span>
+                  </label>
+                  <span>
                   {shortLink
-                    ? new Date(shortLink.createdAt).toLocaleString()
-                    : ""}
+                      ? new Date(shortLink.createdAt).toLocaleString()
+                      : ""}
                 </span>
+                </div>
               </div>
-            </div>
 
-            <div className="card-actions justify-end mt-6">
-              <a
-                target="_blank"
-                href={`/realtime/${shortLink?.shortCode}`}
-                className="btn btn-primary"
+              <div className="divider"></div>
+
+              <h3 className="text-lg font-semibold">Update Destination</h3>
+              <form
+                  action={`/links/${shortLink?.shortCode}/update`}
+                  method="POST"
+                  className="space-y-4"
               >
-                View Realtime Analytics
-              </a>
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">New Long URL</span>
+                  </label>
+                  <input
+                      type="url"
+                      name="newLongUrl"
+                      required
+                      placeholder="https://example.com/new-url"
+                      className="input input-bordered w-full"
+                  />
+                </div>
+                <button type="submit" className="btn btn-primary w-full">
+                  Update Shortlink
+                </button>
+              </form>
+
+              <div className="card-actions justify-end mt-6">
+                <a
+                    target="_blank"
+                    href={`/realtime/${shortLink?.shortCode}`}
+                    className="btn btn-primary"
+                >
+                  View Realtime Analytics
+                </a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <script src="/static/realtime.js"></script>
+        <script src="/static/realtime.js"></script>
     </Layout>
   );
 }
