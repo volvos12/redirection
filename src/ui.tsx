@@ -9,7 +9,7 @@ interface PageProps {
 
 const BASE_URL = Deno.env.get("DENO_ENV") === "dev"
   ? "http://localhost:8000"
-  : "https://redirection-method.deno.dev";
+  : "https://redirection.volvos12.deno.net";
 
 export function Layout({ children }: { children: ComponentChildren }) {
   return (
